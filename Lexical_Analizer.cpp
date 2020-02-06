@@ -50,9 +50,9 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 	return result;
 }
 
-std::string Lexical_Analizer::String_result(const std::vector<struct lex> &res) const {
+std::string Lexical_Analizer::String_result() const {
 	std::string str;
-	for (const auto& iter : res) {
+	for (const auto& iter : result) {
 		str = str + std::to_string(iter.code) + "\t" + std::to_string(iter.i) + "\t" + std::to_string(iter.j) + "\n";
 	}
 	return str;

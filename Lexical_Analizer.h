@@ -17,6 +17,6 @@ public:
 	Lexical_Analizer(Tables *& obj);
 	~Lexical_Analizer();
 	std::vector<struct lex> start(std::string file);
-	std::string String_result(const std::vector<struct lex>& res) const;
+	std::string String_result() const;
 };
 

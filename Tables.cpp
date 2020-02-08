@@ -46,5 +46,42 @@ int Tables::add_const(std::string name) {
 	if (Kiter != keywords.end()) {
 		return Kiter->second;
 	}
-	return 0;
+	auto Iiter = identificators.find(name);
+	if (Iiter != identificators.end()) {
+		return Iiter->second;
+	}
+	auto Citer = const_values.find(name);
+	if (Citer != const_values.end()) {
+		return Citer->second;
+	}
+	const_values.insert(std::make_pair(name, Const_iter));
+	Const_iter++;
+	return Const_iter - 1;
+}
+
+bool Tables::separator(int symb) {
+	for (int i = 0; i < sep_count; i++) {
+		if (separators[i] == symb) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Tables::letter(int symb) {
+	for (int i = 0; i < let_count; i++) {
+		if (letters[i] == symb) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Tables::number(int symb) {
+	for (int i = 0; i < num_count; i++) {
+		if (numbers[i] == symb) {
+			return true;
+		}
+	}
+	return false;
 }

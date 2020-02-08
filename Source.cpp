@@ -8,7 +8,5 @@ int main() {
 	Lexical_Analizer lexer(tables);
 
 	auto res = lexer.start("Test.txt");
-	for (const auto& iter : res) {
-		std::cout << iter.code << "\t" << iter.i << "\t" << iter.j << std::endl;
-	}
+	std::cout << lexer.String_result();
 }

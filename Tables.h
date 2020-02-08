@@ -17,6 +17,7 @@ public:
 		SEPARATOR,
 		SPACE,
 		WHITESPACE,
+		COMMENT,
 		ERROR
 	};
 	int symb_type(int symb);

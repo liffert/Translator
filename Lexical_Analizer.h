@@ -13,8 +13,8 @@ private:
 	};
 	std::vector<struct lex> result;
 	bool whitespace(int symb);
-	static const int sep_count = 17;
-	char separators[sep_count] = { 58, 59, 61, 33, 34, 35, 36, 37, 38, 39, 40, 41, 43, 44, 45, 46, 47 };
+	static const int sep_count = 20;
+	char separators[sep_count] = { 58, 59, 60, 61, 62, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47};
 	bool separator(int symb);
 
 public:

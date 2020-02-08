@@ -78,31 +78,33 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 			result.push_back(temp);
 		}
 		else if (separator(symb)) {
-			std::cout << "Illegal symbol in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
-			return result;
-		}
-		//60 62
-		if (symb == 42) {
-			if (!File.eof()) {
-				symb = File.get();
-				i++;
-				if (symb == 60) {
-					while (!File.eof()) {
-						symb = File.get();
-						i++;
-						if (symb == 62) {
+			//60 62
+			if (symb == 42) {
+				if (!File.eof()) {
+					symb = File.get();
+					i++;
+					if (symb == 60) {
+						while (!File.eof()) {
 							symb = File.get();
 							i++;
-							if (symb == 42) {
-								break;
+							if (symb == 62) {
+								symb = File.get();
+								i++;
+								if (symb == 42) {
+									break;
+								}
 							}
-						}
-						if (whitespace(symb)) {
-							std::cout << "Comment error *< not found" << std::endl;
-							return result;
+							if (whitespace(symb)) {
+								std::cout << "Comment error *< not found" << std::endl;
+								return result;
+							}
 						}
 					}
 				}
+			}
+			else {
+				std::cout << "Illegal symbol in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				return result;
 			}
 		}
 

@@ -1,5 +1,5 @@
 PROGRAM SIG01;
 BEGIN 1001
 SIG01 2011;
-*<sadjhasjkdhajkdhja djajsdasjd kandjasdjksaj asjd jad jkah jkdhakjdjkasbj>*
+(*sadjhasjkdhajkdhja djajsdasjd kandjasdjksaj asjd jad jkah jkdhakjdjkasbj*)
 END

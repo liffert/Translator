@@ -17,6 +17,23 @@ Tables::Tables() {
 	Keywords_iter++;
 	keywords.insert(std::make_pair("RETURN", Keywords_iter));
 	Keywords_iter++;
+
+	for (int i = 0; i < ASCI_count; i++) {
+		ASCI[i] = states::ERROR;
+	}
+
+	for (int i = 0; i < sep_count; i++) {
+		ASCI[separators[i]] = states::SEPARATOR;
+	}
+	for (int i = 0; i < let_count; i++) {
+		ASCI[letters[i]] = states::WORD;
+	}
+	for (int i = 0; i < num_count; i++) {
+		ASCI[numbers[i]] = states::NUMBER;
+	}
+	ASCI[13] = states::WHITESPACE;
+	ASCI[10] = states::WHITESPACE;
+	ASCI[' '] = states::SPACE;
 }
 
 Tables::~Tables() {
@@ -59,29 +76,6 @@ int Tables::add_const(std::string name) {
 	return Const_iter - 1;
 }
 
-bool Tables::separator(int symb) {
-	for (int i = 0; i < sep_count; i++) {
-		if (separators[i] == symb) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Tables::letter(int symb) {
-	for (int i = 0; i < let_count; i++) {
-		if (letters[i] == symb) {
-			return true;
-		}
-	}
-	return false;
-}
-
-bool Tables::number(int symb) {
-	for (int i = 0; i < num_count; i++) {
-		if (numbers[i] == symb) {
-			return true;
-		}
-	}
-	return false;
+int Tables::symb_type(int symb) {
+	return ASCI[symb];
 }

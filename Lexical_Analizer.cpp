@@ -1,25 +1,6 @@
 #include "Lexical_Analizer.h"
 #include <fstream>
 #include <iostream>
-#define is_space(symb) symb != ' '
-
-bool Lexical_Analizer::whitespace(int symb) {
-	if (symb == 13 || symb == 10) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool Lexical_Analizer::separator(int symb) {
-	for (int i = 0; i < sep_count; i++) {
-		if (separators[i] == symb) {
-			return true;
-		}
-	}
-	return false;
-}
 
 Lexical_Analizer::Lexical_Analizer(Tables*& obj) {
 	tables = obj;
@@ -40,9 +21,13 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 	while (!File.eof()) {
 		int symb = File.get();
 
-		if (tables->letter(symb)) {
+		if (tables->symb_type(symb) == Tables::states::WORD) {
 			int k = 0;
-			while (!File.eof() && is_space(symb) && ! whitespace(symb) && !separator(symb)) {
+			while (!File.eof() && tables->symb_type(symb) != Tables::states::SPACE 
+				&& tables->symb_type(symb) != Tables::states::WHITESPACE 
+				&& tables->symb_type(symb) != Tables::states::ERROR
+				&& tables->symb_type(symb) != Tables::states::SEPARATOR) {
+
 				buffer.push_back(symb);
 				k++;
 				symb = File.get();
@@ -52,10 +37,14 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 			i = i + k;
 			buffer.clear();
 		}
-		if (tables->number(symb)) {
+		if (tables->symb_type(symb) == Tables::states::NUMBER) {
 			int k = 0;
-			while (!File.eof() && is_space(symb) && !whitespace(symb) && !separator(symb)) {
-				if (tables->letter(symb)) {
+			while (!File.eof() && tables->symb_type(symb) != Tables::states::SPACE 
+				&& tables->symb_type(symb) != Tables::states::WHITESPACE 
+				&& tables->symb_type(symb) != Tables::states::ERROR 
+				&& tables->symb_type(symb) != Tables::states::SEPARATOR) {
+
+				if (tables->symb_type(symb) == Tables::states::WORD) {
 					std::cout << "Illegal const part in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
 					return result;
 				}
@@ -68,34 +57,34 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 			i = i + k;
 			buffer.clear();
 		}
-		if (whitespace(symb)) {
+		if (tables->symb_type(symb) == Tables::states::WHITESPACE) {
 			j++;
 			i = 0;
 		}
-		if (tables->separator(symb)) {
+		if (tables->symb_type(symb) == Tables::states::SEPARATOR) {
 			struct lex temp { symb, i, j};
 			temp.name.push_back(symb);
 			result.push_back(temp);
 		}
-		else if (separator(symb)) {
+		if(tables->symb_type(symb) == Tables::states::ERROR) {
 			//60 62
-			if (symb == 42) {
+			if (symb == 40) {
 				if (!File.eof()) {
 					symb = File.get();
 					i++;
-					if (symb == 60) {
+					if (symb == 42) {
 						while (!File.eof()) {
 							symb = File.get();
 							i++;
-							if (symb == 62) {
+							if (symb == 42) {
 								symb = File.get();
 								i++;
-								if (symb == 42) {
+								if (symb == 41) {
 									break;
 								}
 							}
-							if (whitespace(symb)) {
-								std::cout << "Comment error *< not found" << std::endl;
+							if (tables->symb_type(symb) == Tables::states::WHITESPACE) {
+								std::cout << "Comment error *) not found" << std::endl;
 								return result;
 							}
 						}

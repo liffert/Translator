@@ -15,7 +15,6 @@ public:
 		WORD,
 		NUMBER,
 		SEPARATOR,
-		SPACE,
 		WHITESPACE,
 		COMMENT,
 		ERROR

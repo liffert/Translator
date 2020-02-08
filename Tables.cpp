@@ -33,7 +33,12 @@ Tables::Tables() {
 	}
 	ASCI[13] = states::WHITESPACE;
 	ASCI[10] = states::WHITESPACE;
-	ASCI[' '] = states::SPACE;
+	ASCI[8] = states::WHITESPACE;
+	ASCI[9] = states::WHITESPACE;
+	ASCI[11] = states::WHITESPACE;
+	ASCI[12] = states::WHITESPACE;
+	ASCI[32] = states::WHITESPACE;
+	ASCI[9] = states::WHITESPACE;
 	ASCI[40] = states::COMMENT;
 }
 

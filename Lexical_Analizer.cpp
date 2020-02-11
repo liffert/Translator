@@ -9,7 +9,7 @@ Lexical_Analizer::Lexical_Analizer(Tables*& obj) {
 Lexical_Analizer::~Lexical_Analizer() {
 }
 
-std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string file) {
+std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::string& file) {
 	std::ifstream File(file);
 	if (!File.is_open()) {
 		std::cout << "ERROR";
@@ -18,16 +18,15 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 
 	std::string buffer;
 	int i = 1; int j = 1;
+	int symb;
 	while (!File.eof()) {
-		int symb = File.get();
+		bool COMMENT_FLAG = false;
+		if (READ_NEXT) { symb = File.get(); }
+		else { READ_NEXT = true; }
 
 		if (tables->symb_type(symb) == Tables::states::WORD) {
 			int k = 0;
 			while (!File.eof()
-				/*&& tables->symb_type(symb) != Tables::states::WHITESPACE
-				&& tables->symb_type(symb) != Tables::states::ERROR
-				&& tables->symb_type(symb) != Tables::states::SEPARATOR
-				&& tables->symb_type(symb) != Tables::states::COMMENT*/
 				&& (tables->symb_type(symb) == Tables::states::WORD || tables->symb_type(symb) == Tables::states::NUMBER)) {
 
 				buffer.push_back(symb);
@@ -42,10 +41,6 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 		if (tables->symb_type(symb) == Tables::states::NUMBER) {
 			int k = 0;
 			while (!File.eof()
-				/*&& tables->symb_type(symb) != Tables::states::WHITESPACE
-				&& tables->symb_type(symb) != Tables::states::ERROR
-				&& tables->symb_type(symb) != Tables::states::SEPARATOR
-				&& tables->symb_type(symb) != Tables::states::COMMENT*/
 				&& tables->symb_type(symb) == Tables::states::NUMBER) {
 
 				if (tables->symb_type(symb) == Tables::states::WORD) {
@@ -63,7 +58,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 		}
 		if (tables->symb_type(symb) == Tables::states::WHITESPACE) {
 			if (symb == 9) {
-				j = j + 5;
+				j = j + 4;
 			}
 			else if (symb == 10 || symb == 13) {
 				i++;
@@ -71,37 +66,43 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 			}
 		}
 		if (tables->symb_type(symb) == Tables::states::SEPARATOR) {
-			struct lex temp { symb, i, j };
-			temp.name.push_back(symb);
-			result.push_back(temp);
+			if (!File.eof()) {
+				int buf = symb;
+				symb = File.get();
+				if (symb == 42) {
+					COMMENT_FLAG = true;
+					j++;
+				}
+				//else if (symb == '$') {}
+				else {
+					struct lex temp { buf, i, j };
+					temp.name.push_back(buf);
+					result.push_back(temp);
+					READ_NEXT = false;
+				}
+			}
 		}
-		if (tables->symb_type(symb) == Tables::states::COMMENT) {
+		if (COMMENT_FLAG) {
 			if (!File.eof()) {
 				symb = File.get();
 				j++;
-				if (symb == 42) {
-					while (!File.eof()) {
+				while (!File.eof()) {
+					symb = File.get();
+					j++;
+					if (symb == 42) {
 						symb = File.get();
 						j++;
-						if (symb == 42) {
-							symb = File.get();
-							j++;
-							if (symb == 41) {
-								break;
-							}
-						}
-						if (symb == 13 || symb == 10) {
-							std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
-							return result;
+						if (symb == 41) {
+							break;
 						}
 					}
-					if (File.eof()) {
+					if (symb == 13 || symb == 10) {
 						std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
 						return result;
 					}
 				}
-				else {
-					std::cout << "Illegal symbol, after '(' expected '*' in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				if (File.eof()) {
+					std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
 					return result;
 				}
 			}
@@ -110,6 +111,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(std::string fi
 			std::cout << "Illegal symbol in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
 			return result;
 		}
+		j++;
 	}
 
 

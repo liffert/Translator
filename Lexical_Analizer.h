@@ -12,11 +12,13 @@ private:
 		std::string name;
 	};
 	std::vector<struct lex> result;
+	bool READ_NEXT = true;
+
 public:
 	//(symb >= 58 && symb <= 62) || (symb >= 33 && symb <= 47)
 	Lexical_Analizer(Tables *& obj);
 	~Lexical_Analizer();
-	std::vector<struct lex> start(std::string file);
+	std::vector<struct lex> start(const std::string& file);
 	std::string String_result() const;
 };
 

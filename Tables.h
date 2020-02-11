@@ -8,18 +8,17 @@ public:
 	Tables();
 	~Tables();
 
-	int add_identificator(std::string name);
-	int add_const(std::string name);
+	int add_identificator(const std::string &name);
+	int add_const(const std::string &name);
 
 	enum states {
 		WORD,
 		NUMBER,
 		SEPARATOR,
 		WHITESPACE,
-		COMMENT,
 		ERROR
 	};
-	int symb_type(int symb);
+	int symb_type(const int symb) const;
 
 private:
 

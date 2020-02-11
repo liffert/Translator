@@ -31,28 +31,22 @@ Tables::Tables() {
 	for (int i = 0; i < num_count; i++) {
 		ASCI[numbers[i]] = states::NUMBER;
 	}
-	ASCI[13] = states::WHITESPACE;
-	ASCI[10] = states::WHITESPACE;
-	ASCI[8] = states::WHITESPACE;
-	ASCI[9] = states::WHITESPACE;
-	ASCI[11] = states::WHITESPACE;
-	ASCI[12] = states::WHITESPACE;
+	for (int i = 8; i <= 13; i++) {
+		ASCI[i] = states::WHITESPACE;
+	}
+
 	ASCI[32] = states::WHITESPACE;
-	ASCI[9] = states::WHITESPACE;
-	ASCI[40] = states::COMMENT;
+	ASCI[40] = states::SEPARATOR;
+	ASCI[41] = states::SEPARATOR;
 }
 
 Tables::~Tables() {
 }
 
-int Tables::add_identificator(std::string name) {
+int Tables::add_identificator(const std::string& name) {
 	auto Kiter = keywords.find(name);
 	if (Kiter != keywords.end()) {
 		return Kiter->second;
-	}
-	auto Citer = const_values.find(name);
-	if (Citer != const_values.end()) {
-		return Citer->second;
 	}
 	auto Iiter = identificators.find(name);
 	if (Iiter != identificators.end()) {
@@ -64,15 +58,7 @@ int Tables::add_identificator(std::string name) {
 	return Ident_iter - 1;
 }
 
-int Tables::add_const(std::string name) {
-	auto Kiter = keywords.find(name);
-	if (Kiter != keywords.end()) {
-		return Kiter->second;
-	}
-	auto Iiter = identificators.find(name);
-	if (Iiter != identificators.end()) {
-		return Iiter->second;
-	}
+int Tables::add_const(const std::string& name) {
 	auto Citer = const_values.find(name);
 	if (Citer != const_values.end()) {
 		return Citer->second;
@@ -82,6 +68,6 @@ int Tables::add_const(std::string name) {
 	return Const_iter - 1;
 }
 
-int Tables::symb_type(int symb) {
+int Tables::symb_type(const int symb) const{
 	return ASCI[symb];
 }

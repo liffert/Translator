@@ -10,6 +10,7 @@ public:
 
 	int add_identificator(const std::string &name);
 	int add_const(const std::string &name);
+	int get_multisep(const std::string &name) const;
 
 	enum states {
 		WORD,
@@ -33,6 +34,7 @@ private:
 	std::map <std::string, int> const_values;
 	std::map <std::string, int> identificators;
 	std::map <std::string, int> keywords;
+	std::map <std::string, int> multisymbol_separators;
 	static const int sep_count = 3;
 	static const int let_count = 26;
 	static const int num_count = 10;

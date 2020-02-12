@@ -38,6 +38,9 @@ Tables::Tables() {
 	ASCI[32] = states::WHITESPACE;
 	ASCI[40] = states::SEPARATOR;
 	ASCI[41] = states::SEPARATOR;
+
+	multisymbol_separators.insert(std::make_pair("($", 201));
+	multisymbol_separators.insert(std::make_pair("$)", 202));
 }
 
 Tables::~Tables() {
@@ -66,6 +69,11 @@ int Tables::add_const(const std::string& name) {
 	const_values.insert(std::make_pair(name, Const_iter));
 	Const_iter++;
 	return Const_iter - 1;
+}
+
+int Tables::get_multisep(const std::string& name) const {
+	auto a = multisymbol_separators.find(name)->second;
+	return a;
 }
 
 int Tables::symb_type(const int symb) const{

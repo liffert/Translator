@@ -21,6 +21,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 	int symb;
 	while (!File.eof()) {
 		bool COMMENT_FLAG = false;
+		bool ASSEMBLY_INSERT_FILE = false;
 		if (READ_NEXT) { symb = File.get(); }
 		else { READ_NEXT = true; }
 
@@ -43,13 +44,13 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 			while (!File.eof()
 				&& tables->symb_type(symb) == Tables::states::NUMBER) {
 
-				if (tables->symb_type(symb) == Tables::states::WORD) {
-					std::cout << "Illegal const part in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
-					return result;
-				}
 				buffer.push_back(symb);
 				k++;
 				symb = File.get();
+			}
+			if (tables->symb_type(symb) == Tables::states::WORD) {
+				std::cout << "Illegal const part in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				return result;
 			}
 			struct lex temp = { tables->add_const(buffer), i, j, buffer };
 			result.push_back(temp);
@@ -66,42 +67,84 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 			}
 		}
 		if (tables->symb_type(symb) == Tables::states::SEPARATOR) {
-			if (!File.eof()) {
-				int buf = symb;
+			if (symb == '(') {
+				if (!File.eof()) {
+					int buf = symb;
+					symb = File.get();
+					if (symb == 42) {
+						COMMENT_FLAG = true;
+						j++;
+					}
+					else if (symb == '$') {
+						std::string str = "(";
+						str.push_back(symb);
+						struct lex temp = { tables->get_multisep(str), i, j, str};
+						result.push_back(temp);
+						ASSEMBLY_INSERT_FILE = true;
+					}
+					else {
+						struct lex temp { buf, i, j };
+						temp.name.push_back(buf);
+						result.push_back(temp);
+						READ_NEXT = false;
+					}
+				}
+			}
+			else {
+				struct lex temp { symb, i, j };
+				temp.name.push_back(symb);
+				result.push_back(temp);
+			}
+		}
+		if (ASSEMBLY_INSERT_FILE) {
+			std::string word;
+			int k = 0;
+			while (!File.eof()) {
 				symb = File.get();
-				if (symb == 42) {
-					COMMENT_FLAG = true;
+				k++;
+				int buf;
+				if (symb == '$') {
+					buf = symb;
+					symb = File.get();
 					j++;
+					if (symb == ')') {
+						break;
+					}
+					else {
+						word.push_back(buf);
+						word.push_back(symb);
+					}
 				}
-				//else if (symb == '$') {}
 				else {
-					struct lex temp { buf, i, j };
-					temp.name.push_back(buf);
-					result.push_back(temp);
-					READ_NEXT = false;
+					word.push_back(symb);
 				}
+			}
+			if (File.eof()) {
+				std::cout << "Assembly insert file error '$)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				return result;
+			}
+			else {
+				struct lex temp{tables->add_identificator(word), i, j, word};
+				std::string str = "$)";
+				j = j + k;
+				struct lex temp2 {tables->add_identificator(str), i, j, str};
+				result.push_back(temp);
+				result.push_back(temp2);
+
 			}
 		}
 		if (COMMENT_FLAG) {
-			if (!File.eof()) {
+			while (!File.eof()) {
 				symb = File.get();
 				j++;
-				while (!File.eof()) {
+				if (symb == 42) {
 					symb = File.get();
 					j++;
-					if (symb == 42) {
-						symb = File.get();
-						j++;
-						if (symb == 41) {
-							break;
-						}
-					}
-					if (symb == 13 || symb == 10) {
-						std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
-						return result;
+					if (symb == 41) {
+						break;
 					}
 				}
-				if (File.eof()) {
+				if (symb == 13 || symb == 10) {
 					std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
 					return result;
 				}

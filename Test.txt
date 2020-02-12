@@ -1,4 +1,5 @@
 PROGRAM SIG01;
+($ hello world $)
 BEGIN 1001
 A
 SIG01 2011;

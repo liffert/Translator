@@ -17,9 +17,11 @@ public:
 		NUMBER,
 		SEPARATOR,
 		WHITESPACE,
+		MULTI_SEPARATORS,
 		ERROR
 	};
 	int symb_type(const int symb) const;
+	bool maybeMultiSep(const std::string sep) const;
 
 private:
 

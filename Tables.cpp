@@ -31,16 +31,19 @@ Tables::Tables() {
 	for (int i = 0; i < num_count; i++) {
 		ASCI[numbers[i]] = states::NUMBER;
 	}
-	for (int i = 8; i <= 13; i++) {
-		ASCI[i] = states::WHITESPACE;
-	}
 
+	ASCI[8] = states::WHITESPACE;
+	ASCI[9] = states::WHITESPACE;
+	ASCI[10] = states::WHITESPACE;
+	ASCI[13] = states::WHITESPACE;
 	ASCI[32] = states::WHITESPACE;
 	ASCI[40] = states::SEPARATOR;
 	ASCI[41] = states::SEPARATOR;
 
 	multisymbol_separators.insert(std::make_pair("($", 201));
 	multisymbol_separators.insert(std::make_pair("$)", 202));
+	//multisymbol_separators.insert(std::make_pair("-->", 203));
+	//ASCI['-'] = states::MULTI_SEPARATORS;
 }
 
 Tables::~Tables() {
@@ -78,4 +81,26 @@ int Tables::get_multisep(const std::string& name) const {
 
 int Tables::symb_type(const int symb) const{
 	return ASCI[symb];
+}
+
+bool Tables::maybeMultiSep(const std::string sep) const {
+	for (const auto& iter : multisymbol_separators) {
+		std::string F;
+		if (iter.first.length() < sep.length()) {
+			continue;
+		}
+		if (iter.first.length() == sep.length()) {
+			if (iter.first == sep) {
+				return true;
+			}
+			continue;
+		}
+		for (int i = 0; i < sep.length(); i++) {
+			F = F + iter.first[i];
+		}
+		if (F == sep) {
+			return true;
+		}
+	}
+	return false;
 }

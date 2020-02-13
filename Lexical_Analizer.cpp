@@ -17,12 +17,13 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 	}
 
 	std::string buffer;
-	int i = 1; int j = 1;
+	int i = 1; int j = 0;
 	int symb;
 	while (!File.eof()) {
 		bool COMMENT_FLAG = false;
 		bool ASSEMBLY_INSERT_FILE = false;
-		if (READ_NEXT) { symb = File.get(); }
+		bool MULTI_SEPARATOR = false;
+		if (READ_NEXT) { symb = File.get(); j++; }
 		else { READ_NEXT = true; }
 
 		if (tables->symb_type(symb) == Tables::states::WORD) {
@@ -34,8 +35,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 				k++;
 				symb = File.get();
 			}
-			struct lex temp { tables->add_identificator(buffer), i, j, buffer };
-			result.push_back(temp);
+			result.push_back({ tables->add_identificator(buffer), i, j, buffer });
 			j = j + k;
 			buffer.clear();
 		}
@@ -50,10 +50,10 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 			}
 			if (tables->symb_type(symb) == Tables::states::WORD) {
 				std::cout << "Illegal const part in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				File.close();
 				return result;
 			}
-			struct lex temp = { tables->add_const(buffer), i, j, buffer };
-			result.push_back(temp);
+			result.push_back({ tables->add_const(buffer), i, j, buffer });
 			j = j + k;
 			buffer.clear();
 		}
@@ -67,28 +67,10 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 			}
 		}
 		if (tables->symb_type(symb) == Tables::states::SEPARATOR) {
-			if (symb == '(') {
-				if (!File.eof()) {
-					int buf = symb;
-					symb = File.get();
-					if (symb == 42) {
-						COMMENT_FLAG = true;
-						j++;
-					}
-					else if (symb == '$') {
-						std::string str = "(";
-						str.push_back(symb);
-						struct lex temp = { tables->get_multisep(str), i, j, str};
-						result.push_back(temp);
-						ASSEMBLY_INSERT_FILE = true;
-					}
-					else {
-						struct lex temp { buf, i, j };
-						temp.name.push_back(buf);
-						result.push_back(temp);
-						READ_NEXT = false;
-					}
-				}
+			std::string MaybeMultiSymbol;
+			MaybeMultiSymbol.push_back(symb);
+			if (tables->maybeMultiSep(MaybeMultiSymbol)) {
+				MULTI_SEPARATOR = true;
 			}
 			else {
 				struct lex temp { symb, i, j };
@@ -96,69 +78,99 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 				result.push_back(temp);
 			}
 		}
+		if (MULTI_SEPARATOR || tables->symb_type(symb) == Tables::states::MULTI_SEPARATORS) {
+			std::string MaybeMultiSymbol;
+			MaybeMultiSymbol.push_back(symb);
+			if (!File.eof()) {
+				symb = File.get();
+				MaybeMultiSymbol.push_back(symb);
+				if (MaybeMultiSymbol == "(*") {
+					COMMENT_FLAG = true;
+					j++;
+				}
+				else if (MaybeMultiSymbol == "($") {
+					struct lex temp = { tables->get_multisep(MaybeMultiSymbol), i, j, MaybeMultiSymbol };
+					result.push_back(temp);
+					ASSEMBLY_INSERT_FILE = true;
+					j++;
+				}
+				else {
+					int k = 1;
+					while (tables->maybeMultiSep(MaybeMultiSymbol)) {
+						symb = File.get();
+						MaybeMultiSymbol.push_back(symb);
+						k++;
+					}
+					MaybeMultiSymbol.pop_back();
+					if (MaybeMultiSymbol.length() > 1) {
+						struct lex temp { tables->get_multisep(MaybeMultiSymbol), i, j, MaybeMultiSymbol
+						};
+						result.push_back(temp);
+						j = j + k;
+					}
+					else {
+						MaybeMultiSymbol = *MaybeMultiSymbol.begin();
+						struct lex temp { *MaybeMultiSymbol.begin(), i, j, MaybeMultiSymbol };
+						result.push_back(temp);
+						READ_NEXT = false;
+						j++;
+					}
+				}
+			}
+		}
 		if (ASSEMBLY_INSERT_FILE) {
 			std::string word;
+			std::string maybeSep;
 			int k = 0;
 			while (!File.eof()) {
 				symb = File.get();
 				k++;
-				int buf;
-				if (symb == '$') {
-					buf = symb;
-					symb = File.get();
-					j++;
-					if (symb == ')') {
-						break;
-					}
-					else {
-						word.push_back(buf);
-						word.push_back(symb);
-					}
+				maybeSep.push_back(symb);
+				if (maybeSep == "$)") {
+					break;
 				}
 				else {
-					word.push_back(symb);
+					word = word + *maybeSep.begin();
+					maybeSep = maybeSep.back();
 				}
 			}
 			if (File.eof()) {
 				std::cout << "Assembly insert file error '$)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				File.close();
 				return result;
 			}
 			else {
-				struct lex temp{tables->add_identificator(word), i, j, word};
-				std::string str = "$)";
+				result.push_back({ tables->add_identificator(word), i, j, word });
 				j = j + k;
-				struct lex temp2 {tables->add_identificator(str), i, j, str};
-				result.push_back(temp);
-				result.push_back(temp2);
-
+				result.push_back({ tables->add_identificator(maybeSep), i, j - 1, maybeSep });
 			}
 		}
 		if (COMMENT_FLAG) {
+			std::string maybeSep;
 			while (!File.eof()) {
 				symb = File.get();
 				j++;
-				if (symb == 42) {
-					symb = File.get();
-					j++;
-					if (symb == 41) {
-						break;
-					}
+				maybeSep.push_back(symb);
+				if (maybeSep == "*)") {
+					break;
 				}
-				if (symb == 13 || symb == 10) {
-					std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
-					return result;
+				else {
+					maybeSep = maybeSep.back();
 				}
 			}
+			if (File.eof()) {
+				std::cout << "Comment error '*)' not found in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+				File.close();
+				return result;
+			}
 		}
-		else if (tables->symb_type(symb) == Tables::states::ERROR) {
+		if (tables->symb_type(symb) == Tables::states::ERROR) {
 			std::cout << "Illegal symbol in line " << i << " column " << j << ": " << symb << " char(" << static_cast<char>(symb) << ")" << std::endl;
+			File.close();
 			return result;
 		}
-		j++;
 	}
-
-
-
+	File.close();
 	return result;
 }
 

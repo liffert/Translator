@@ -130,7 +130,9 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 					break;
 				}
 				else {
-					word = word + *maybeSep.begin();
+					if (k != 1) {
+						word = word + *maybeSep.begin();
+					}
 					maybeSep = maybeSep.back();
 				}
 			}

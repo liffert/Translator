@@ -1,5 +1,6 @@
 #include "Tables.h"
 #include <iostream>
+#include <iomanip>
 
 Tables::Tables() {
 	Ident_iter = 1001;
@@ -42,6 +43,7 @@ Tables::Tables() {
 
 	multisymbol_separators.insert(std::make_pair("($", 201));
 	multisymbol_separators.insert(std::make_pair("$)", 202));
+	multisymbol_separators.insert(std::make_pair("(*", 203));
 	//multisymbol_separators.insert(std::make_pair("-->", 203));
 	//ASCI['-'] = states::MULTI_SEPARATORS;
 }
@@ -75,8 +77,13 @@ int Tables::add_const(const std::string& name) {
 }
 
 int Tables::get_multisep(const std::string& name) const {
-	auto a = multisymbol_separators.find(name)->second;
-	return a;
+	auto a = multisymbol_separators.find(name);
+	if (a == multisymbol_separators.end()) {
+		return -1;
+	}
+	else{
+		return a->second;
+	}
 }
 
 int Tables::symb_type(const int symb) const{
@@ -104,3 +111,15 @@ bool Tables::maybeMultiSep(const std::string sep) const {
 	}
 	return false;
 }
+
+void Tables::print_tables() {
+	std::cout << "Identificators\n";
+	for (const auto& iter : identificators) {
+		std::cout << std::setw(15) << iter.first << "\t" << std::setw(15) << iter.second << std::endl;
+	}
+	std::cout << "\n\nConstants\n";
+	for (const auto& iter : const_values) {
+		std::cout << std::setw(15) << iter.first << "\t" << std::setw(15) << iter.second << std::endl;
+	}
+}
+

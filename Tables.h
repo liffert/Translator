@@ -22,6 +22,7 @@ public:
 	};
 	int symb_type(const int symb) const;
 	bool maybeMultiSep(const std::string sep) const;
+	void print_tables();
 
 private:
 
@@ -32,6 +33,7 @@ private:
 
 	int Const_iter = 501;
 	const int Const_rangeEnd = 1000;
+
 
 	std::map <std::string, int> const_values;
 	std::map <std::string, int> identificators;

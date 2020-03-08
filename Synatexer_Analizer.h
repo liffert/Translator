@@ -19,6 +19,7 @@ private:
 	bool procedure_identifier();
 	bool asfi();
 	bool identifier();
+	bool unsigned_integer();
 
 	std::shared_ptr<std::vector<struct Lexical_Analizer::lex>> lex;
 	std::shared_ptr<Tables> tables;

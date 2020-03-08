@@ -25,6 +25,7 @@ public:
 	void print_tables();
 
 	bool isIdentifier(int code) const;
+	bool isConst(int code) const;
 
 private:
 

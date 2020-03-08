@@ -132,3 +132,12 @@ bool Tables::isIdentifier(int code) const {
 	return false;
 }
 
+bool Tables::isConst(int code) const {
+	for (const auto& iter : const_values) {
+		if (iter.second == code) {
+			return true;
+		}
+	}
+	return false;
+}
+

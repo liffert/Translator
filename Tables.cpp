@@ -123,3 +123,12 @@ void Tables::print_tables() {
 	}
 }
 
+bool Tables::isIdentifier(int code) const {
+	for (const auto& iter : identificators) {
+		if (iter.second == code) {
+			return true;
+		}
+	}
+	return false;
+}
+

@@ -225,3 +225,4 @@ std::string Lexical_Analizer::String_result() const {
 	}
 	return str;
 }
+

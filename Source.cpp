@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include "Synatexer_Analizer.h"
 
 int main() {
 	Tables *tables = new Tables();
@@ -21,4 +22,9 @@ int main() {
 	std::cout << lexer.String_result();
 	std::cout << "\n\n\n";
 	tables->print_tables();
+
+	std::shared_ptr<Tables> t = std::make_shared<Tables>(*tables);
+	Synatexer_Analizer temp(t, res);
+	auto tree = temp.start();
+	tree.print(tree.get_head(), "");
 }

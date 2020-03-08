@@ -24,6 +24,8 @@ public:
 	bool maybeMultiSep(const std::string sep) const;
 	void print_tables();
 
+	bool isIdentifier(int code) const;
+
 private:
 
 	int Ident_iter = 1001;

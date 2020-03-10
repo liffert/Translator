@@ -18,13 +18,17 @@ int main() {
 	}
 	f.close();*/
 
-	auto res = lexer.start("TestT.txt");
+	auto res = lexer.start("Test2.txt");
 	std::cout << lexer.String_result();
 	std::cout << "\n\n\n";
 	tables->print_tables();
 
+	if(!lexer.isSuccsess()){
+		std::cout << "Lexer had an error\n";
+		return 1;
+	}
 	std::shared_ptr<Tables> t = std::make_shared<Tables>(*tables);
 	Synatexer_Analizer temp(t, res);
 	auto tree = temp.start();
-	tree.print(tree.get_head(), "");
+	tree.print();
 }

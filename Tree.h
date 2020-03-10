@@ -13,13 +13,11 @@ private:
 	using element = struct el;
 	std::shared_ptr<element> head = nullptr;
 	std::shared_ptr<element> current = nullptr;
+	void print(const std::shared_ptr<element> &ptr, std::string separator) const;
 
 public:
 	Tree();
 	void add(std::string value);
 	void backToParent();
-	std::shared_ptr<element> get_head() const;
-	void print(const std::shared_ptr<element> &ptr, std::string separator) const;
-
+	void print();
 };
-

@@ -10,6 +10,7 @@ Lexical_Analizer::~Lexical_Analizer() {
 }
 
 std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::string& file) {
+	succsess = false;
 	std::ifstream File(file);
 	if (!File.is_open()) {
 		std::cout << "ERROR";
@@ -215,6 +216,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 		}
 	}
 	File.close();
+	succsess = true;
 	return result;
 }
 
@@ -224,5 +226,9 @@ std::string Lexical_Analizer::String_result() const {
 		str = str + std::to_string(iter.code) + "\t" + std::to_string(iter.i) + "\t" + std::to_string(iter.j) + "\t" + iter.name + "\n";
 	}
 	return str;
+}
+
+bool Lexical_Analizer::isSuccsess() const {
+	return succsess;
 }
 

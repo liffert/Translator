@@ -13,6 +13,7 @@ private:
 	};
 	std::vector<struct lex> result;
 	bool READ_NEXT = true;
+	bool succsess = false;
 
 public:
 	//(symb >= 58 && symb <= 62) || (symb >= 33 && symb <= 47)
@@ -20,5 +21,6 @@ public:
 	~Lexical_Analizer();
 	std::vector<struct lex> start(const std::string& file);
 	std::string String_result() const;
+	bool isSuccsess() const;
 };
 

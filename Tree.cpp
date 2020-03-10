@@ -15,8 +15,8 @@ void Tree::backToParent() {
 	current = current->parent;
 }
 
-std::shared_ptr<Tree::element> Tree::get_head() const {
-	return head;
+void Tree::print() {
+	print(head, "");
 }
 
 void Tree::print(const std::shared_ptr<element>& ptr, std::string separator) const {

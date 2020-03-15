@@ -327,7 +327,7 @@ bool Synatexer_Analizer::asfi() {
 	if (current->code == 201) {
 		tree.add(current->name + "     " + std::to_string(current->code));
 		tree.backToParent();
-		tree.add("<assembly-insert-file-identidier>");
+		tree.add("<assembly-insert-file-identifier>");
 		current++;
 		if (!identifier()) {
 			error << "identifier is expected [" << current->i << ", " << current->j << "]" << std::endl;

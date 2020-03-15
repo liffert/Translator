@@ -18,7 +18,7 @@ int main() {
 	}
 	f.close();*/
 
-	auto res = lexer.start("Test2.txt");
+	auto res = lexer.start("TestT.txt");
 	std::cout << lexer.String_result();
 	std::cout << "\n\n\n";
 	tables->print_tables();
@@ -31,4 +31,8 @@ int main() {
 	Synatexer_Analizer temp(t, res);
 	auto tree = temp.start();
 	tree.print();
+
+	if (!temp.isSuccsess()) {
+		temp.outError();
+	}
 }

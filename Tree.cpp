@@ -23,7 +23,7 @@ void Tree::print(const std::shared_ptr<element>& ptr, std::string separator) con
 	if (!ptr) {
 		return;
 	}
-	std::cout << separator << ptr->value << std::endl;
+	std::cout << "(" << separator.length() << ")" << separator << ptr->value << std::endl;
 	for (const auto& iter : ptr->childs) {
 		print(iter, separator + "---");
 	}

@@ -3,6 +3,7 @@
 #include "Tables.h"
 #include "Tree.h"
 #include "Lexical_Analizer.h"
+#include <sstream>
 
 class Synatexer_Analizer {
 private:
@@ -26,9 +27,16 @@ private:
 
 	Tree tree;
 	std::vector<struct Lexical_Analizer::lex>::iterator current;
+
+	std::stringstream error;
+
+	bool succsess = false;
 public:
 
 	Synatexer_Analizer(std::shared_ptr<Tables>& Tables, std::vector<struct Lexical_Analizer::lex>& lex);
 	Tree start();
+
+	bool isSuccsess() const;
+	void outError() const;
 };
 

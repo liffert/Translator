@@ -11,7 +11,16 @@ Tree Synatexer_Analizer::start() {
 	return tree;
 }
 
+bool Synatexer_Analizer::isSuccsess() const {
+	return succsess;
+}
+
+void Synatexer_Analizer::outError() const {
+	std::cout << "\n\nERROR:\n" << error.str() << std::endl;
+}
+
 bool Synatexer_Analizer::program() {
+	succsess = false;
 	if (current->code == 401) {
 		tree.add("<program>");
 		current++;
@@ -25,7 +34,7 @@ bool Synatexer_Analizer::program() {
 		}
 		tree.backToParent();
 		if (current->code != ';') {
-			std::cout << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 		tree.add(current->name + "     " + std::to_string(current->code));
@@ -37,11 +46,19 @@ bool Synatexer_Analizer::program() {
 		current++;
 		tree.backToParent();
 		if (current->code != ';') {
-			std::cout << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 		tree.add(current->name + "     " + std::to_string(current->code));
 		tree.backToParent();
+		current++;
+		if (current == lex->end()){
+			succsess = true;
+			return true;
+		}
+		else {
+			error << "Code after END" << std::endl;
+		}
 	}
 	return false;
 }
@@ -60,11 +77,11 @@ bool Synatexer_Analizer::block() {
 			return true;
 		}
 		else {
-			std::cout << "END is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "END is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 	}
-	std::cout << "BEGIN is expected [" << current->i << ", " << current->j << "]" << std::endl;
+	error << "BEGIN is expected [" << current->i << ", " << current->j << "]" << std::endl;
 	return false;
 }
 
@@ -95,7 +112,7 @@ bool Synatexer_Analizer::label_declaration() {
 				return true;
 			}
 			else {
-				std::cout << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
+				error << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
 				return false;
 			}
 		}
@@ -120,7 +137,10 @@ bool Synatexer_Analizer::label_list() {
 		tree.add(current->name + "     " + std::to_string(current->code));
 		tree.backToParent();
 		current++;
-		if (!unsigned_integer()) { return false; }
+		if (!unsigned_integer()) { 
+			error << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
+			return false; 
+		}
 		else {
 			tree.add("<unsigned-integer>");
 			tree.add(current->name + "     " + std::to_string(current->code));
@@ -145,7 +165,10 @@ bool Synatexer_Analizer::parameters_list() {
 		tree.add(current->name + "     " + std::to_string(current->code));
 		tree.backToParent();
 		current++;
-		if (!variable_identifier()) { return false; }
+		if (!variable_identifier()) {
+			error << "variable identifier expected [" << current->i << ", " << current->j << "]" << std::endl;
+			return false; 
+		}
 		tree.backToParent();
 		if (!identifiers_list()) { return false; }
 		tree.backToParent();
@@ -156,12 +179,13 @@ bool Synatexer_Analizer::parameters_list() {
 			return true;
 		}
 		else {
-			std::cout << ") is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << ") is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 	}
 	tree.add("<empty>");
 	tree.backToParent();
+	return true;
 }
 
 bool Synatexer_Analizer::identifiers_list() {
@@ -170,7 +194,10 @@ bool Synatexer_Analizer::identifiers_list() {
 		tree.add(current->name + "     " + std::to_string(current->code));
 		tree.backToParent();
 		current++;
-		if (!variable_identifier()) { return false; }
+		if (!variable_identifier()) { 
+			error << "variable identifier expected [" << current->i << ", " << current->j << "]" << std::endl; 
+			return false; 
+		}
 		tree.backToParent();
 		if (!identifiers_list()) { return false; }
 		tree.backToParent();
@@ -186,8 +213,9 @@ bool Synatexer_Analizer::statements_list() {
 	tree.add("<statement-list>");
 	if (current->code != 403) {
 		if (!statement()) { return false; }
-		statements_list();
+		bool s = statements_list();
 		tree.backToParent();
+		return s;
 	}
 	else {
 		tree.add("<empty>");
@@ -214,7 +242,7 @@ bool Synatexer_Analizer::statement() {
 			return s;
 		}
 		else {
-			std::cout << ": is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << ": is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 	}
@@ -230,7 +258,7 @@ bool Synatexer_Analizer::statement() {
 			return true;
 		}
 		else {
-			std::cout << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 	}
@@ -239,7 +267,7 @@ bool Synatexer_Analizer::statement() {
 		tree.backToParent();
 		current++;
 		if (!unsigned_integer()) {
-			std::cout << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 		else {
@@ -256,7 +284,7 @@ bool Synatexer_Analizer::statement() {
 				return true;
 			}
 			else {
-				std::cout << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
+				error << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
 				return false;
 			}
 		}
@@ -272,7 +300,7 @@ bool Synatexer_Analizer::statement() {
 		tree.backToParent();
 		return true; 
 	}
-	std::cout << "error statement [" << current->i << ", " << current->j << "]" << std::endl;
+	error << "error statement [" << current->i << ", " << current->j << "]" << std::endl;
 	return false;
 }
 
@@ -291,7 +319,7 @@ bool Synatexer_Analizer::procedure_identifier() {
 		tree.backToParent();
 		return true;
 	}
-	std::cout << "procedure-identifier expected [" << current->i << ", " << current->j << "]" << std::endl;
+	error << "procedure-identifier expected [" << current->i << ", " << current->j << "]" << std::endl;
 	return false;
 }
 
@@ -302,7 +330,7 @@ bool Synatexer_Analizer::asfi() {
 		tree.add("<assembly-insert-file-identidier>");
 		current++;
 		if (!identifier()) {
-			std::cout << "identifier is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "identifier is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
 		tree.backToParent();

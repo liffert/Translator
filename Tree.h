@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <fstream>
 class Tree {
 private:
 	struct el {
@@ -14,10 +15,12 @@ private:
 	std::shared_ptr<element> head = nullptr;
 	std::shared_ptr<element> current = nullptr;
 	void print(const std::shared_ptr<element> &ptr, std::string separator) const;
+	void saveToFile(std::ofstream& file, const std::shared_ptr<element>& ptr, std::string separator) const;
 
 public:
 	Tree();
 	void add(std::string value);
 	void backToParent();
 	void print();
+	void saveToFile(std::ofstream &file);
 };

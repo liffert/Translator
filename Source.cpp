@@ -5,25 +5,47 @@
 #include <sstream>
 #include "Synatexer_Analizer.h"
 
-int main() {
-	Tables *tables = new Tables();
-	Lexical_Analizer lexer(tables);
-	/*std::ofstream f("Test2.txt");
-	std::ifstream f2("Test.txt");
-	std::stringstream temp; 
-	temp << f2.rdbuf();
-	f2.close();
-	for (int i = 0; i < 100000; i++) {
-		f << temp.str() << "\n";
-	}
-	f.close();*/
+struct path {
+	std::string project = "./";
+	std::string folder = "Test1/";
+	std::string input = "input.sig";
+	std::string output = "generated.txt";
+	bool state;
+	std::string get_output_path() const;
+	std::string get_input_path() const;
+	path(bool state) : state(state) {}
+};
 
-	auto res = lexer.start("TestT.txt");
+
+std::string path::get_output_path() const {
+	std::string ret;
+	if (state) { ret = project + "True/" + folder + output; }
+	else { ret = project + "False/" + folder + output; }
+	return ret;
+}
+
+std::string path::get_input_path() const {
+	std::string ret;
+	if (state) { ret = project + "True/" + folder + input; }
+	else { ret = project + "False/" + folder + input; }
+	return ret;
+
+}
+
+
+int main() {
+	using path_t = struct path;
+	path_t Path(true);
+	
+	Tables* tables = new Tables();
+	Lexical_Analizer lexer(tables);
+
+	auto res = lexer.start(Path.get_input_path());
 	std::cout << lexer.String_result();
 	std::cout << "\n\n\n";
 	tables->print_tables();
 
-	if(!lexer.isSuccsess()){
+	if (!lexer.isSuccsess()) {
 		std::cout << "Lexer had an error\n";
 		return 1;
 	}
@@ -32,7 +54,11 @@ int main() {
 	auto tree = temp.start();
 	tree.print();
 
+	std::ofstream out(Path.get_output_path());
+	tree.saveToFile(out);
 	if (!temp.isSuccsess()) {
-		temp.outError();
+		std::cout << temp.getError();
+		out << temp.getError();
 	}
+	out.close();
 }

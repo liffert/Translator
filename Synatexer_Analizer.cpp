@@ -1,7 +1,7 @@
 #include "Synatexer_Analizer.h"
 
-Synatexer_Analizer::Synatexer_Analizer(std::shared_ptr<Tables>& tables, std::vector<struct Lexical_Analizer::lex>& lex) {
-	this->lex = std::make_shared<std::vector<struct Lexical_Analizer::lex>>(lex);
+Synatexer_Analizer::Synatexer_Analizer(std::shared_ptr<Tables>& tables, std::vector<Lexical_Analizer::lexStruct>& lex) {
+    this->lex = std::make_shared<std::vector<Lexical_Analizer::lexStruct>>(lex);
 	this->tables = tables;
 	current = this->lex->begin();
 }
@@ -15,8 +15,8 @@ bool Synatexer_Analizer::isSuccsess() const {
 	return succsess;
 }
 
-void Synatexer_Analizer::outError() const {
-	std::cout << "\n\nERROR:\n" << error.str() << std::endl;
+std::string Synatexer_Analizer::getError() const {
+	return "\n\nERROR:\n" + error.str() + "\n";
 }
 
 bool Synatexer_Analizer::program() {
@@ -150,6 +150,7 @@ bool Synatexer_Analizer::label_list() {
 		}
 		if (!label_list()) { return false; }
 		tree.backToParent();
+        return true;
 	}
 	else {
 		tree.add("<empty>");
@@ -201,6 +202,7 @@ bool Synatexer_Analizer::identifiers_list() {
 		tree.backToParent();
 		if (!identifiers_list()) { return false; }
 		tree.backToParent();
+        return true;
 	}
 	else {
 		tree.add("<empty>");

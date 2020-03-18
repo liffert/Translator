@@ -17,6 +17,7 @@ private:
 
 public:
 	//(symb >= 58 && symb <= 62) || (symb >= 33 && symb <= 47)
+    using lexStruct = struct lex;
 	Lexical_Analizer(Tables *& obj);
 	~Lexical_Analizer();
 	std::vector<struct lex> start(const std::string& file);

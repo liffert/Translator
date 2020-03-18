@@ -22,21 +22,21 @@ private:
 	bool identifier();
 	bool unsigned_integer();
 
-	std::shared_ptr<std::vector<struct Lexical_Analizer::lex>> lex;
+    std::shared_ptr<std::vector<Lexical_Analizer::lexStruct>> lex;
 	std::shared_ptr<Tables> tables;
 
 	Tree tree;
-	std::vector<struct Lexical_Analizer::lex>::iterator current;
+    std::vector<Lexical_Analizer::lexStruct>::iterator current;
 
 	std::stringstream error;
 
 	bool succsess = false;
 public:
 
-	Synatexer_Analizer(std::shared_ptr<Tables>& Tables, std::vector<struct Lexical_Analizer::lex>& lex);
+    Synatexer_Analizer(std::shared_ptr<Tables>& Tables, std::vector<Lexical_Analizer::lexStruct>& lex);
 	Tree start();
 
 	bool isSuccsess() const;
-	void outError() const;
+	std::string getError() const;
 };
 

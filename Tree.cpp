@@ -19,6 +19,14 @@ void Tree::print() {
 	print(head, "");
 }
 
+void Tree::saveToFile(std::ofstream& file) {
+	if (!file.is_open()) {
+		std::cout << "ERROR file is not open\n";
+		return;
+	}
+	saveToFile(file, head, "");
+}
+
 void Tree::print(const std::shared_ptr<element>& ptr, std::string separator) const {
 	if (!ptr) {
 		return;
@@ -26,6 +34,16 @@ void Tree::print(const std::shared_ptr<element>& ptr, std::string separator) con
 	std::cout << "(" << separator.length() << ")" << separator << ptr->value << std::endl;
 	for (const auto& iter : ptr->childs) {
 		print(iter, separator + "---");
+	}
+}
+
+void Tree::saveToFile(std::ofstream& file, const std::shared_ptr<element>& ptr, std::string separator) const {
+	if (!ptr) {
+		return;
+	}
+	file << "(" << separator.length() << ")" << separator << ptr->value << std::endl;
+	for (const auto& iter : ptr->childs) {
+		saveToFile(file, iter, separator + "---");
 	}
 }
 

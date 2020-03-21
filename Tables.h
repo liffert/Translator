@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <fstream>
 
 class Tables {
 public:
@@ -26,6 +27,8 @@ public:
 
 	bool isIdentifier(int code) const;
 	bool isConst(int code) const;
+
+	void saveTofile(std::ofstream &file) const;
 
 private:
 

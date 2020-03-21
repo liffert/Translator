@@ -1,0 +1,29 @@
+401	1	1	PROCEDURE
+1001	1	11	PR
+59	1	13	;
+404	2	1	LABEL
+402	3	1	BEGIN
+403	4	1	END
+59	4	4	;
+Identificators
+             PR	           1001
+
+
+Constants
+(0)signal-program
+(3)---<program>
+(6)------<procedure-identifier>
+(9)---------<identifier>
+(12)------------PR     1001
+(3)---<parameters-list>
+(6)------<empty>
+(3)---;     59
+(3)---<block>
+(6)------<declaration>
+(9)---------<label-declaration>
+(12)------------LABEL     404
+
+
+ERROR:
+unsigned integer expected [3, 1]
+

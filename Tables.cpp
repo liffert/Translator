@@ -141,3 +141,18 @@ bool Tables::isConst(int code) const {
 	return false;
 }
 
+void Tables::saveTofile(std::ofstream& file) const {
+	if (!file.is_open()) {
+		std::cout << "ERROR" << std::endl;
+		return;
+	}
+	file << "Identificators\n";
+	for (const auto& iter : identificators) {
+		file << std::setw(15) << iter.first << "\t" << std::setw(15) << iter.second << std::endl;
+	}
+	file << "\n\nConstants\n";
+	for (const auto& iter : const_values) {
+		file << std::setw(15) << iter.first << "\t" << std::setw(15) << iter.second << std::endl;
+	}
+}
+

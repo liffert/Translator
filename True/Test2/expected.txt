@@ -1,0 +1,34 @@
+401	1	1	PROCEDURE
+1001	1	11	PR
+59	1	13	;
+402	2	1	BEGIN
+406	3	1	RETURN
+59	3	7	;
+403	4	1	END
+59	4	4	;
+Identificators
+             PR	           1001
+
+
+Constants
+(0)signal-program
+(3)---<program>
+(6)------<procedure-identifier>
+(9)---------<identifier>
+(12)------------PR     1001
+(3)---<parameters-list>
+(6)------<empty>
+(3)---;     59
+(3)---<block>
+(6)------<declaration>
+(9)---------<label-declaration>
+(12)------------<empty>
+(6)------BEGIN     402
+(9)---------<statement-list>
+(12)------------<statement>
+(15)---------------RETURN     406
+(15)---------------;     59
+(12)------------<statement-list>
+(15)---------------<empty>
+(6)------END     403
+(3)---;     59

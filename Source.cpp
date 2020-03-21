@@ -40,13 +40,17 @@ int main() {
 	Tables* tables = new Tables();
 	Lexical_Analizer lexer(tables);
 
+	std::ofstream out(Path.get_output_path());
+	
 	auto res = lexer.start(Path.get_input_path());
+	out << lexer.String_result();
 	std::cout << lexer.String_result();
 	std::cout << "\n\n\n";
 	tables->print_tables();
 
 	if (!lexer.isSuccsess()) {
 		std::cout << "Lexer had an error\n";
+		out << "Lexer had an error\n";
 		return 1;
 	}
 	std::shared_ptr<Tables> t = std::make_shared<Tables>(*tables);
@@ -54,7 +58,7 @@ int main() {
 	auto tree = temp.start();
 	tree.print();
 
-	std::ofstream out(Path.get_output_path());
+	tables->saveTofile(out);
 	tree.saveToFile(out);
 	if (!temp.isSuccsess()) {
 		std::cout << temp.getError();

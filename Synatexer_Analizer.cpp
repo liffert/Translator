@@ -45,6 +45,7 @@ bool Synatexer_Analizer::program() {
 		}
 		current++;
 		tree.backToParent();
+		tree.backToParent();
 		if (current->code != ';') {
 			error << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -117,15 +118,12 @@ bool Synatexer_Analizer::label_declaration() {
 			}
 		}
 		else {
-			tree.add("<empty>");
-			tree.backToParent();
-			tree.backToParent();
-			return true;
+			error << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
+			return false;
 		}
 	}
 	else {
 		tree.add("<empty>");
-		tree.backToParent();
 		tree.backToParent();
 		return true;
 	}

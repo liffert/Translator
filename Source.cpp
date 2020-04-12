@@ -19,15 +19,15 @@ struct path {
 
 std::string path::get_output_path() const {
 	std::string ret;
-	if (state) { ret = project + "True/" + folder + output; }
-	else { ret = project + "False/" + folder + output; }
+	if (state) { ret = project + "Tests/True/" + folder + output; }
+	else { ret = project + "Tests/False/" + folder + output; }
 	return ret;
 }
 
 std::string path::get_input_path() const {
 	std::string ret;
-	if (state) { ret = project + "True/" + folder + input; }
-	else { ret = project + "False/" + folder + input; }
+	if (state) { ret = project + "Tests/True/" + folder + input; }
+	else { ret = project + "Tests/False/" + folder + input; }
 	return ret;
 
 }

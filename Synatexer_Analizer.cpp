@@ -37,7 +37,7 @@ bool Synatexer_Analizer::program() {
 			error << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (!block()) {
@@ -50,7 +50,7 @@ bool Synatexer_Analizer::program() {
 			error << "; expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
 		}
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (current == lex->end()){
@@ -69,12 +69,12 @@ bool Synatexer_Analizer::block() {
 	if (!declaration()) { return false; }
 	tree.backToParent();
 	if (current->code == 402) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		current++;
 		if (!statements_list()) { return false; }
 		tree.backToParent();
 		if (current->code == 403) {
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			return true;
 		}
 		else {
@@ -96,18 +96,18 @@ bool Synatexer_Analizer::declaration() {
 bool Synatexer_Analizer::label_declaration() {
 	tree.add("<label-declaration>");
 	if (current->code == 404) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		current++;
 		if (unsigned_integer()) {
 			tree.add("<unsigned-integer>");
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			tree.backToParent();
 			tree.backToParent();
 			current++;
 			if (!label_list()) { return false; }
 			if (current->code == ';') {
 				tree.backToParent();
-				tree.add(current->name + "     " + std::to_string(current->code));
+				tree.add(current->code);
 				current++;
 				tree.backToParent();
 				return true;
@@ -132,7 +132,7 @@ bool Synatexer_Analizer::label_declaration() {
 bool Synatexer_Analizer::label_list() {
 	tree.add("<label-list>");
 	if (current->code == ',') {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (!unsigned_integer()) { 
@@ -141,7 +141,7 @@ bool Synatexer_Analizer::label_list() {
 		}
 		else {
 			tree.add("<unsigned-integer>");
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			current++;
 			tree.backToParent();
 			tree.backToParent();
@@ -161,7 +161,7 @@ bool Synatexer_Analizer::label_list() {
 bool Synatexer_Analizer::parameters_list() {
 	tree.add("<parameters-list>");
 	if (current->code == '(') {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (!variable_identifier()) {
@@ -172,7 +172,7 @@ bool Synatexer_Analizer::parameters_list() {
 		if (!identifiers_list()) { return false; }
 		tree.backToParent();
 		if (current->code == ')') {
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			current++;
 			tree.backToParent();
 			return true;
@@ -190,7 +190,7 @@ bool Synatexer_Analizer::parameters_list() {
 bool Synatexer_Analizer::identifiers_list() {
 	tree.add("<identifiers-list>");
 	if (current->code == ',') {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (!variable_identifier()) { 
@@ -229,12 +229,12 @@ bool Synatexer_Analizer::statement() {
 	tree.add("<statement>");
 	if (unsigned_integer()) {
 		tree.add("<unsigned-integer>");
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		tree.backToParent();
 		current++;
 		if (current->code == ':') {
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			tree.backToParent();
 			current++;
 			bool s = statement();
@@ -247,11 +247,11 @@ bool Synatexer_Analizer::statement() {
 		}
 	}
 	if (current->code == 406) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (current->code == ';') {
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			current++;
 			tree.backToParent();
 			tree.backToParent();
@@ -263,7 +263,7 @@ bool Synatexer_Analizer::statement() {
 		}
 	}
 	if (current->code == 405) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		if (!unsigned_integer()) {
@@ -272,12 +272,12 @@ bool Synatexer_Analizer::statement() {
 		}
 		else {
 			tree.add("<unsigned-integer>");
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			tree.backToParent();
 			tree.backToParent();
 			current++;
 			if (current->code == ';') {
-				tree.add(current->name + "     " + std::to_string(current->code));
+				tree.add(current->code);
 				tree.backToParent();
 				tree.backToParent();
 				current++;
@@ -290,7 +290,7 @@ bool Synatexer_Analizer::statement() {
 		}
 	}
 	if (current->code == ';') {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		tree.backToParent();
 		current++;
@@ -325,7 +325,7 @@ bool Synatexer_Analizer::procedure_identifier() {
 
 bool Synatexer_Analizer::asfi() {
 	if (current->code == 201) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		tree.add("<assembly-insert-file-identifier>");
 		current++;
@@ -336,7 +336,7 @@ bool Synatexer_Analizer::asfi() {
 		tree.backToParent();
 		tree.backToParent();
 		if (current->code == 202) {
-			tree.add(current->name + "     " + std::to_string(current->code));
+			tree.add(current->code);
 			tree.backToParent();
 			current++;
 			return true;
@@ -348,7 +348,7 @@ bool Synatexer_Analizer::asfi() {
 bool Synatexer_Analizer::identifier() {
 	tree.add("<identifier>");
 	if (tables->isIdentifier(current->code)) {
-		tree.add(current->name + "     " + std::to_string(current->code));
+		tree.add(current->code);
 		tree.backToParent();
 		current++;
 		return true;

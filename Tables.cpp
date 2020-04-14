@@ -156,3 +156,17 @@ void Tables::saveTofile(std::ofstream& file) const {
 	}
 }
 
+std::string Tables::getName(int code) const {
+	for (auto& iter : identificators) {
+		if (iter.second == code) {
+			return iter.first;
+		}
+	}
+	for (auto& iter : const_values) {
+		if (iter.second == code) {
+			return iter.first;
+		}
+	}
+	return "";
+}
+

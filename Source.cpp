@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include "Synatexer_Analizer.h"
+#include "CodeGenerate.h"
 
 struct path {
 	std::string project = "./";
@@ -31,7 +32,6 @@ std::string path::get_input_path() const {
 	return ret;
 
 }
-
 
 int main() {
 	using path_t = struct path;
@@ -63,6 +63,12 @@ int main() {
 	if (!temp.isSuccsess()) {
 		std::cout << temp.getError();
 		out << temp.getError();
+		return 1;
 	}
+	CodeGenerate code(*tables, tree);
+	code.start(tree.get_head());
+
+	std::cout << "\n\n\nErrors:\n";
+	std::cout << code.getError();
 	out.close();
 }

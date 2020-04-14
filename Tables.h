@@ -29,6 +29,7 @@ public:
 	bool isConst(int code) const;
 
 	void saveTofile(std::ofstream &file) const;
+	std::string getName(int code) const;
 
 private:
 

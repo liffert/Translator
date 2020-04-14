@@ -14,6 +14,7 @@ struct path {
 	bool state;
 	std::string get_output_path() const;
 	std::string get_input_path() const;
+	std::string get_folder_path() const;
 	path(bool state) : state(state) {}
 };
 
@@ -31,6 +32,13 @@ std::string path::get_input_path() const {
 	else { ret = project + "Tests/False/" + folder + input; }
 	return ret;
 
+}
+
+std::string path::get_folder_path() const {
+	std::string ret;
+	if (state) { ret = project + "Tests/True/" + folder; }
+	else { ret = project + "Tests/False/" + folder; }
+	return ret;
 }
 
 int main() {
@@ -65,7 +73,7 @@ int main() {
 		out << temp.getError();
 		return 1;
 	}
-	CodeGenerate code(*tables, tree);
+	CodeGenerate code(*tables, tree, Path.get_folder_path());
 	code.start(tree.get_head());
 
 	std::cout << "\n\n\nErrors:\n";

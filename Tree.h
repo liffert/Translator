@@ -11,7 +11,9 @@ private:
 		std::variant<std::string, int> value;
 		std::vector<std::shared_ptr<el>> childs;
 		std::shared_ptr<el> parent = nullptr;
-		el(std::shared_ptr<el> parent, std::variant<std::string, int> value) noexcept;
+		el(std::shared_ptr<el> parent, std::variant<std::string, int> value, int i, int j) noexcept;
+		int j = 0;
+		int i = 0;
 	};
 
 public:
@@ -25,7 +27,7 @@ private:
 
 public:
 	Tree();
-	void add(std::variant<std::string, int>);
+	void add(std::variant<std::string, int> value, int i = 0, int j = 0);
 	void backToParent();
 	void print();
 	void saveToFile(std::ofstream &file);

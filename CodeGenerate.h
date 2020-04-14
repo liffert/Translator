@@ -23,9 +23,10 @@ private:
 
 	std::map<int, std::string> errors;
 	std::stringstream ER;
+	std::string path;
 	
 public:
-	CodeGenerate(Tables& tables, Tree& tree);
+	CodeGenerate(Tables& tables, Tree& tree, std::string path);
 	void start(std::shared_ptr<Tree::element> ptr);
 
 	std::string getError();

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-CodeGenerate::CodeGenerate(Tables& tables, Tree& tree) {
+CodeGenerate::CodeGenerate(Tables& tables, Tree& tree, std::string path) : path(path) {
 	this->tables = std::make_shared<Tables>(tables);
 	this->tree = std::make_shared<Tree>(tree);
 }
@@ -20,10 +20,10 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		}
 		else if (std::get<std::string>(ptr->value) == "<identifier>") {
 			int temp = std::get<int>(ptr->childs.at(0)->value);
-			if (Proc == temp) { ER << "Redefine proc name\n"; return; }
+			if (Proc == temp) { ER << "Redefine proc name [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 			if (IN.parameter_list) {
 				if (std::find(declared.begin(), declared.end(), temp) != declared.end()) {
-					ER << "Redefine identidier\n";
+					ER << "Redefine identidier [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n";
 					return;
 				}
 				else {
@@ -42,27 +42,27 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		else if (std::get<std::string>(ptr->value) == "<unsigned-integer>") {
 			int temp = std::get<int>(ptr->childs.at(0)->value);
 			if (IN.LablesDec) {
-				if (Lables.find(temp) != Lables.end()) { ER << "Redefine lable\n"; return; }
+				if (Lables.find(temp) != Lables.end()) { ER << "Redefine lable [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 				Lables.insert({ temp, false });
 				std::cout << tables->getName(temp) << " LABEL ?\n";
 				return;
 			}
 			else {
-				if (Lables.find(temp) == Lables.end()) { ER << "Label used but not declared\n"; return; }
+				if (Lables.find(temp) == Lables.end()) { ER << "Label used but not declared [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 				if (Lables[temp]) {
 					if (IN.GOTO) {
 						std::cout << "jmp " << tables->getName(temp) << std::endl;
 						IN.GOTO = false;
 						return;
 					}
-					ER << "LABEL REINIT\n";
+					ER << "LABEL REINIT [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n";
 					return;
 				}
 				else {
 					if (IN.GOTO) {
 						std::cout << "jmp " << tables->getName(temp) << std::endl;
 						IN.GOTO = false;
-						errors.insert({ temp, "IS used but didn`t init\n" });
+						errors.insert({ temp, "IS used but didn`t init [" + std::to_string(ptr->childs.at(0)->i) + ", " + std::to_string(ptr->childs.at(0)->j) + "]\n" });
 						return;
 					}
 				}
@@ -75,14 +75,14 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			}
 		}
 		else if (std::get<std::string>(ptr->value) == "<assembly-insert-file-identifier>") {
-			std::ifstream file(tables->getName(std::get<int>(ptr->childs.at(0)->childs.at(0)->value)));
+			std::ifstream file(path + tables->getName(std::get<int>(ptr->childs.at(0)->childs.at(0)->value)));
 			if (file.is_open()) {
 				std::stringstream buf;
 				buf << file.rdbuf();
 				std::cout << buf.str() << std::endl;
 			}
 			else {
-				ER << "FILE IS NOT EXIST\n";
+				ER << "FILE IS NOT EXIST [" << ptr->childs.at(0)->childs.at(0)->i << ", " << ptr->childs.at(0)->childs.at(0)->j << "]\n";;
 			}
 			return;
 		}

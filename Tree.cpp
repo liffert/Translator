@@ -2,12 +2,12 @@
 #include <iostream>
 
 Tree::Tree() {
-	head = std::make_shared<element>(element(nullptr, "<signal-program>"));
+	head = std::make_shared<element>(element(nullptr, "<signal-program>", 0, 0));
 	current = head;
 }
 
-void Tree::add(std::variant<std::string, int> value) {
-	current->childs.push_back(std::make_shared<element>(current, value));
+void Tree::add(std::variant<std::string, int> value, int i, int j) {
+	current->childs.push_back(std::make_shared<element>(current, value, i, j));
 	current = current->childs.back();
 }
 
@@ -60,4 +60,4 @@ std::string Tree::pval(const std::shared_ptr<element>& ptr) const {
 	}
 }
 
-Tree::el::el(std::shared_ptr<el> parent, std::variant<std::string, int> value) noexcept : parent(parent), value(value) {}
+Tree::el::el(std::shared_ptr<el> parent, std::variant<std::string, int> value, int i, int j) noexcept : parent(parent), value(value), i(i), j(j) {}

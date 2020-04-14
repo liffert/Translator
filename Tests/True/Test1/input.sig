@@ -8,6 +8,5 @@ GOTO 10;
 ($HELLO$)
 32:
 GOTO 20;
-($HEXA$)
 ;
 END;

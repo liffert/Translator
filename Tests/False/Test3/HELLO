@@ -1,0 +1,3 @@
+mov eax, ebx
+cmp eax, 2
+nop

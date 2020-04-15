@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <variant>
+#include "Tables.h"
 
 class Tree {
 private:
@@ -22,7 +23,9 @@ private:
 	std::shared_ptr<element> head = nullptr;
 	std::shared_ptr<element> current = nullptr;
 	void print(const std::shared_ptr<element> &ptr, std::string separator) const;
+	void pretty_print(const std::shared_ptr<element>& ptr, std::string separator, Tables& tables) const;
 	void saveToFile(std::ofstream& file, const std::shared_ptr<element>& ptr, std::string separator) const;
+	void prettySaveToFile(std::ofstream& file, const std::shared_ptr<element>& ptr, std::string separator, Tables &tables) const;
 	std::string pval(const std::shared_ptr<element>& ptr) const;
 
 public:
@@ -30,6 +33,8 @@ public:
 	void add(std::variant<std::string, int> value, int i = 0, int j = 0);
 	void backToParent();
 	void print();
+	void pretty_print(Tables& tables);
 	void saveToFile(std::ofstream &file);
+	void prettySaveToFile(std::ofstream& file, Tables &tables);
 	std::shared_ptr<element> get_head() const;
 };

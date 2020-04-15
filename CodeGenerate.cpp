@@ -23,7 +23,7 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			if (Proc == temp) { ER << "Redefine proc name [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 			if (IN.parameter_list) {
 				if (std::find(declared.begin(), declared.end(), temp) != declared.end()) {
-					ER << "Redefine identidier [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n";
+					ER << "Redefine identidier " + tables->getName(temp) + " [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n";
 					return;
 				}
 				else {
@@ -34,7 +34,7 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		}
 		else if (std::get<std::string>(ptr->value) == "<block>") {
 			IN.parameter_list = false;
-			std::cout << "DATA SEGMENT\n";
+			OUT << "DATA SEGMENT\n";
 		}
 		else if (std::get<std::string>(ptr->value) == "<statement>") {
 			IN.statement = true;
@@ -42,16 +42,16 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		else if (std::get<std::string>(ptr->value) == "<unsigned-integer>") {
 			int temp = std::get<int>(ptr->childs.at(0)->value);
 			if (IN.LablesDec) {
-				if (Lables.find(temp) != Lables.end()) { ER << "Redefine lable [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
+				if (Lables.find(temp) != Lables.end()) { ER << "Redefine label " + tables->getName(temp) + " [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 				Lables.insert({ temp, false });
-				std::cout << tables->getName(temp) << " LABEL ?\n";
+				OUT << tables->getName(temp) << " LABEL ?\n";
 				return;
 			}
 			else {
-				if (Lables.find(temp) == Lables.end()) { ER << "Label used but not declared [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
+				if (Lables.find(temp) == Lables.end()) { ER << "Label " + tables->getName(temp) + " used but didn`t define [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 				if (Lables[temp]) {
 					if (IN.GOTO) {
-						std::cout << "jmp " << tables->getName(temp) << std::endl;
+						OUT << "jmp " << tables->getName(temp) << std::endl;
 						IN.GOTO = false;
 						return;
 					}
@@ -60,9 +60,9 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 				}
 				else {
 					if (IN.GOTO) {
-						std::cout << "jmp " << tables->getName(temp) << std::endl;
+						OUT << "jmp " << tables->getName(temp) << std::endl;
 						IN.GOTO = false;
-						errors.insert({ temp, "IS used but didn`t init [" + std::to_string(ptr->childs.at(0)->i) + ", " + std::to_string(ptr->childs.at(0)->j) + "]\n" });
+						errors.insert({ temp, "Label " + tables->getName(temp) + " used but didn`t init [" + std::to_string(ptr->childs.at(0)->i) + ", " + std::to_string(ptr->childs.at(0)->j) + "]\n" });
 						return;
 					}
 				}
@@ -70,7 +70,7 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 					errors.erase(temp);
 				}
 				Lables[temp] = true;
-				std::cout << tables->getName(temp) << ":\n";
+				OUT << tables->getName(temp) << ":\n";
 				return;
 			}
 		}
@@ -79,7 +79,7 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			if (file.is_open()) {
 				std::stringstream buf;
 				buf << file.rdbuf();
-				std::cout << buf.str() << std::endl;
+				OUT << buf.str() << std::endl;
 			}
 			else {
 				ER << "FILE IS NOT EXIST [" << ptr->childs.at(0)->childs.at(0)->i << ", " << ptr->childs.at(0)->childs.at(0)->j << "]\n";;
@@ -89,27 +89,25 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		break;
 	case 1:
 		if (std::get<int>(ptr->value) == 402) {
-			std::cout << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\nproc " << tables->getName(Proc) << std::endl;
+			OUT << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\nproc " << tables->getName(Proc) << std::endl;
 			IN.LablesDec = false;
 		}
 		else if (std::get<int>(ptr->value) == 403) {
-			std::cout << "leave\n" << tables->getName(Proc) << " ENDP\nCODE ENDS\n";
+			OUT << "leave\n" << tables->getName(Proc) << " ENDP\nCODE ENDS\n";
 		}
 		else if (std::get<int>(ptr->value) == 404) {
 			IN.LablesDec = true;
 		}
 		else if (std::get<int>(ptr->value) == 405) {
 			IN.GOTO = true;
-			IN.statement = false;
 		}
 		else if (std::get<int>(ptr->value) == 406) {
-			std::cout << "ret\n";
-			IN.statement = false;
+			OUT << "ret\n";
 		}
 		else if (std::get<int>(ptr->value) == ';') {
 			if (IN.statement) {
 				IN.statement = false;
-				std::cout << "nop\n";
+				OUT << "nop\n";
 			}
 		}
 		break;
@@ -126,4 +124,19 @@ std::string CodeGenerate::getError() {
 		ER << iter.second << std::endl;
 	}
 	return ER.str();
+}
+
+std::string CodeGenerate::getResult() {
+	return OUT.str();
+}
+
+void CodeGenerate::saveToFile(std::ofstream &out) {
+	out << OUT.str();
+}
+
+bool CodeGenerate::isSuccess() {
+	if (ER.str().empty()) {
+		return true;
+	}
+	return false;
 }

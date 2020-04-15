@@ -23,12 +23,18 @@ private:
 
 	std::map<int, std::string> errors;
 	std::stringstream ER;
+	std::stringstream OUT;
 	std::string path;
+	
 	
 public:
 	CodeGenerate(Tables& tables, Tree& tree, std::string path);
 	void start(std::shared_ptr<Tree::element> ptr);
 
 	std::string getError();
+	std::string getResult();
+	void saveToFile(std::ofstream &out);
+
+	bool isSuccess();
 };
 

@@ -44,12 +44,12 @@ std::string path::get_folder_path() const {
 int main() {
 	using path_t = struct path;
 	path_t Path(true);
-	
+
 	Tables* tables = new Tables();
 	Lexical_Analizer lexer(tables);
 
 	std::ofstream out(Path.get_output_path());
-	
+
 	auto res = lexer.start(Path.get_input_path());
 	out << lexer.String_result();
 	std::cout << lexer.String_result();
@@ -75,8 +75,12 @@ int main() {
 	}
 	CodeGenerate code(*tables, tree, Path.get_folder_path());
 	code.start(tree.get_head());
+	std::cout << code.getResult();
+	code.saveToFile(out);
 
-	std::cout << "\n\n\nErrors:\n";
-	std::cout << code.getError();
+	if (!code.isSuccess()) {
+		std::cout << "\n\n\nErrors:\n";
+		std::cout << code.getError();
+	}
 	out.close();
 }

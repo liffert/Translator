@@ -167,6 +167,21 @@ std::string Tables::getName(int code) const {
 			return iter.first;
 		}
 	}
+	std::string ret;
+	if (this->symb_type(code) == Tables::states::SEPARATOR) {
+		ret.push_back(code);
+		return ret;
+	}
+	for (auto& iter : multisymbol_separators) {
+		if (iter.second == code) {
+			return iter.first;
+		}
+	}
+	for (auto& iter : keywords) {
+		if (iter.second == code) {
+			return iter.first;
+		}
+	}
 	return "";
 }
 

@@ -86,6 +86,13 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			}
 			return;
 		}
+		else if (std::get<std::string>(ptr->value) == "<statement-list>") {
+			if (ptr->childs.at(0)->value.index() == 0) {
+				if (std::get<std::string>(ptr->childs.at(0)->value) == "<empty>") {
+					OUT << "nop\n";
+				}
+			}
+		}
 		break;
 	case 1:
 		if (std::get<int>(ptr->value) == 402) {

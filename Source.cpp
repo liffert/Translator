@@ -43,7 +43,7 @@ std::string path::get_folder_path() const {
 
 int main() {
 	using path_t = struct path;
-	path_t Path(true);
+	path_t Path(false);
 
 	Tables* tables = new Tables();
 	Lexical_Analizer lexer(tables);
@@ -80,7 +80,10 @@ int main() {
 
 	if (!code.isSuccess()) {
 		std::cout << "\n\n\nErrors:\n";
-		std::cout << code.getError();
+		std::string err = code.getError();
+		std::cout << err;
+		out << "\n\n\nErrors:\n";
+		out << err;
 	}
 	out.close();
 }

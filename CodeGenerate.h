@@ -11,7 +11,7 @@ private:
 	std::shared_ptr<Tree> tree;
 	std::shared_ptr<Tables> tables;
 	int Proc;
-	std::vector<int> declared;
+	std::map<int, std::string> declared;
 	std::map<int, bool> Lables;
 
 	struct in {

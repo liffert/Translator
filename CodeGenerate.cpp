@@ -22,17 +22,22 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			int temp = std::get<int>(ptr->childs.at(0)->value);
 			if (Proc == temp) { ER << "Redefine proc name [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n"; return; }
 			if (IN.parameter_list) {
-				if (std::find(declared.begin(), declared.end(), temp) != declared.end()) {
+				if (declared.find(temp) != declared.end()) {
 					ER << "Redefine identidier " + tables->getName(temp) + " [" << ptr->childs.at(0)->i << ", " << ptr->childs.at(0)->j << "]\n";
 					return;
 				}
 				else {
-					declared.push_back(temp);
+					declared.insert({ temp, "" });
 					return;
 				}
 			}
 		}
 		else if (std::get<std::string>(ptr->value) == "<block>") {
+			int val = 8;
+			for (auto iter = declared.rbegin(); iter != declared.rend(); iter++) {
+				(*iter).second = "[ebp + " + std::to_string(val) + "]";
+				val = val + 4;
+			}
 			IN.parameter_list = false;
 			OUT << "DATA SEGMENT\n";
 		}
@@ -96,7 +101,10 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		break;
 	case 1:
 		if (std::get<int>(ptr->value) == 402) {
-			OUT << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\nproc " << tables->getName(Proc) << std::endl;
+			OUT << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\n" << tables->getName(Proc) << " proc" << std::endl;
+			for (auto & iter : declared) {
+				OUT << "POP AX\n";
+			}
 			IN.LablesDec = false;
 		}
 		else if (std::get<int>(ptr->value) == 403) {

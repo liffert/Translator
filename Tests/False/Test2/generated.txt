@@ -1,0 +1,27 @@
+401	1	1	PROCEDURE
+1001	1	11	PR
+59	1	13	;
+404	2	1	LABEL
+402	3	1	BEGIN
+403	4	1	END
+59	4	4	;
+Identificators
+             PR	           1001
+
+
+Constants
+(0)<signal-program>
+(3)---<program>
+(6)------<procedure-identifier>
+(9)---------<identifier>
+(12)------------1001
+(6)------<parameters-list>
+(9)---------<empty>
+(6)------59
+(6)------<block>
+(9)---------<declaration>
+(12)------------<label-declaration>
+(15)---------------404
+Syntaxer had an error:
+unsigned integer expected [3, 1]
+

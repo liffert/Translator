@@ -16,30 +16,33 @@ Constants
 (6)------<procedure-identifier>
 (9)---------<identifier>
 (12)------------1001
-(3)---<parameters-list>
-(6)------<empty>
-(3)---59
-(3)---<block>
-(6)------<declaration>
-(9)---------<label-declaration>
-(12)------------<empty>
-(6)------402
-(9)---------<statement-list>
-(12)------------<statement>
-(15)---------------406
-(15)---------------59
-(12)------------<statement-list>
+(6)------<parameters-list>
+(9)---------<empty>
+(6)------59
+(6)------<block>
+(9)---------<declaration>
+(12)------------<label-declaration>
 (15)---------------<empty>
-(6)------403
-(3)---59
+(9)---------402
+(12)------------<statement-list>
+(15)---------------<statement>
+(18)------------------406
+(18)------------------59
+(15)---------------<statement-list>
+(18)------------------<empty>
+(9)---------403
+(6)------59
 DATA SEGMENT
 DATA ENDS
 CODE SEGMENT
 ASSUME CS:CODE DS:DATA
-proc PR
+PR proc
+pop eax
+push eax
 ret
 nop
 nop
-leave
+push eax
+ret
 PR ENDP
 CODE ENDS

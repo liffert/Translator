@@ -16,7 +16,7 @@ bool Synatexer_Analizer::isSuccsess() const {
 }
 
 std::string Synatexer_Analizer::getError() const {
-	return "\n\nERROR:\n" + error.str() + "\n";
+	return error.str() + "\n";
 }
 
 bool Synatexer_Analizer::program() {
@@ -27,7 +27,6 @@ bool Synatexer_Analizer::program() {
 		if (!procedure_identifier()) {
 			return false;
 		}
-		tree.backToParent();
 		tree.backToParent();
 		if (!parameters_list()) {
 			return false;

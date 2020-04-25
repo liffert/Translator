@@ -101,14 +101,14 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 		break;
 	case 1:
 		if (std::get<int>(ptr->value) == 402) {
-			OUT << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\n" << tables->getName(Proc) << " proc" << std::endl;
-			for (auto & iter : declared) {
-				OUT << "POP AX\n";
+			OUT << "DATA ENDS\nCODE SEGMENT\nASSUME CS:CODE DS:DATA\n" << tables->getName(Proc) << " proc\npop eax\n";
+			for (auto iter = declared.rbegin(); iter != declared.rend(); iter++) {
+				OUT << tables->getName((*iter).first) << " DW ?\n" << "POP " << tables->getName((*iter).first) << std::endl;
 			}
 			IN.LablesDec = false;
 		}
 		else if (std::get<int>(ptr->value) == 403) {
-			OUT << "leave\n" << tables->getName(Proc) << " ENDP\nCODE ENDS\n";
+			OUT << "push eax\nret\n" << tables->getName(Proc) << " ENDP\nCODE ENDS\n";
 		}
 		else if (std::get<int>(ptr->value) == 404) {
 			IN.LablesDec = true;
@@ -117,7 +117,7 @@ void CodeGenerate::start(std::shared_ptr<Tree::element> ptr) {
 			IN.GOTO = true;
 		}
 		else if (std::get<int>(ptr->value) == 406) {
-			OUT << "ret\n";
+			OUT << "push eax\nret\n";
 		}
 		else if (std::get<int>(ptr->value) == ';') {
 			if (IN.statement) {

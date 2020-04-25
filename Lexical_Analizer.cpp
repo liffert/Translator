@@ -13,7 +13,7 @@ std::vector<struct Lexical_Analizer::lex> Lexical_Analizer::start(const std::str
 	succsess = false;
 	std::ifstream File(file);
 	if (!File.is_open()) {
-		std::cout << "ERROR";
+		std::cout << "ERROR file does not exist\n";
 		return result;
 	}
 

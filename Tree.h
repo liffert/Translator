@@ -37,4 +37,5 @@ public:
 	void saveToFile(std::ofstream &file);
 	void prettySaveToFile(std::ofstream& file, Tables &tables);
 	std::shared_ptr<element> get_head() const;
+	std::shared_ptr<element>& get_current();
 };

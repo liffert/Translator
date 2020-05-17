@@ -43,6 +43,10 @@ std::shared_ptr<Tree::element> Tree::get_head() const {
 	return head;
 }
 
+std::shared_ptr<Tree::element>& Tree::get_current() {
+	return current;
+}
+
 void Tree::print(const std::shared_ptr<element>& ptr, std::string separator) const {
 	if (!ptr) {
 		return;

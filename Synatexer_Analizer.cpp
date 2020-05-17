@@ -70,7 +70,10 @@ bool Synatexer_Analizer::block() {
 	if (current->code == 402) {
 		tree.add(current->code, current->i, current->j);
 		current++;
-		if (!statements_list()) { return false; }
+		if (!statements_list()) { 
+			error << "statement error at [" << current->i << ", " << current->j << "]" << std::endl;
+			return false;
+		}
 		tree.backToParent();
 		if (current->code == 403) {
 			tree.add(current->code, current->i, current->j);
@@ -210,21 +213,23 @@ bool Synatexer_Analizer::identifiers_list() {
 
 bool Synatexer_Analizer::statements_list() {
 	tree.add("<statement-list>");
-	if (current->code != 403) {
-		if (!statement()) { return false; }
+	bool statementErr = true;
+	if (statement(statementErr)) {
 		bool s = statements_list();
 		tree.backToParent();
 		return s;
 	}
 	else {
+		tree.backToParent();
+		tree.get_current()->childs.erase(tree.get_current()->childs.end() - 1);
 		tree.add("<empty>");
 		tree.backToParent();
 		tree.backToParent();
-		return true;
+		return !statementErr;
 	}
 }
 
-bool Synatexer_Analizer::statement() {
+bool Synatexer_Analizer::statement(bool &err) {
 	tree.add("<statement>");
 	if (unsigned_integer()) {
 		tree.add("<unsigned-integer>");
@@ -236,12 +241,13 @@ bool Synatexer_Analizer::statement() {
 			tree.add(current->code, current->i, current->j);
 			tree.backToParent();
 			current++;
-			bool s = statement();
+			bool s = statement(err);
+			if (!s) { err = true; }
 			tree.backToParent();
 			return s;
 		}
 		else {
-			error << ": is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << ": is expected [" << current->i << ", " << current->j << "] - ";
 			return false;
 		}
 	}
@@ -257,7 +263,7 @@ bool Synatexer_Analizer::statement() {
 			return true;
 		}
 		else {
-			error << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "; is expected [" << current->i << ", " << current->j << "] - ";
 			return false;
 		}
 	}
@@ -266,7 +272,7 @@ bool Synatexer_Analizer::statement() {
 		tree.backToParent();
 		current++;
 		if (!unsigned_integer()) {
-			error << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
+			error << "unsigned integer expected [" << current->i << ", " << current->j << "] - ";
 			return false;
 		}
 		else {
@@ -283,7 +289,7 @@ bool Synatexer_Analizer::statement() {
 				return true;
 			}
 			else {
-				error << "; is expected [" << current->i << ", " << current->j << "]" << std::endl;
+				error << "; is expected [" << current->i << ", " << current->j << "] - ";
 				return false;
 			}
 		}
@@ -299,7 +305,7 @@ bool Synatexer_Analizer::statement() {
 		tree.backToParent();
 		return true;
 	}
-	error << "error statement [" << current->i << ", " << current->j << "]" << std::endl;
+	err = false;
 	return false;
 }
 

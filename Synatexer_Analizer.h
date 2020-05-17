@@ -15,7 +15,7 @@ private:
 	bool parameters_list();
 	bool identifiers_list();
 	bool statements_list();
-	bool statement();
+	bool statement(bool& err);
 	bool variable_identifier();
 	bool procedure_identifier();
 	bool asfi();

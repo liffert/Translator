@@ -50,10 +50,11 @@ int main(int argc, char **args) {
 
 	std::ofstream out(Path.get_output_path());
 	auto res = lexer.start(Path.get_input_path());
-	out << lexer.String_result();
-	std::cout << lexer.String_result();
-	std::cout << "\n\n\n";
+	//out << lexer.String_result();
+	//std::cout << lexer.String_result();
+	//std::cout << "\n\n\n";
 	tables->print_tables();
+	tables->saveTofile(out);
 
 	if (!lexer.isSuccsess()) {
 		std::cout << "Lexer had an errors:\n";
@@ -65,7 +66,6 @@ int main(int argc, char **args) {
 	auto tree = temp.start();
 	tree.pretty_print(*tables);
 
-	tables->saveTofile(out);
 	tree.prettySaveToFile(out, *tables);
 	if (!temp.isSuccsess()) {
 		std::cout << "Syntaxer had an error:\n";

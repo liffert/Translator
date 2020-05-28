@@ -23,7 +23,7 @@ bool Synatexer_Analizer::program() {
 	succsess = false;
 	if (current->code == 401) {
 		tree.add("<program>");
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!procedure_identifier()) {
 			return false;
 		}
@@ -38,11 +38,11 @@ bool Synatexer_Analizer::program() {
 		}
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!block()) {
 			return false;
 		}
-		current++;
+		if(!currentAdd()) {return false; }
 		tree.backToParent();
 		tree.backToParent();
 		if (current->code != ';') {
@@ -69,7 +69,7 @@ bool Synatexer_Analizer::block() {
 	tree.backToParent();
 	if (current->code == 402) {
 		tree.add(current->code, current->i, current->j);
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!statements_list()) { 
 			error << "statement error at [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -99,18 +99,18 @@ bool Synatexer_Analizer::label_declaration() {
 	tree.add("<label-declaration>");
 	if (current->code == 404) {
 		tree.add(current->code, current->i, current->j);
-		current++;
+		if(!currentAdd()) {return false; }
 		if (unsigned_integer()) {
 			tree.add("<unsigned-integer>");
 			tree.add(current->code, current->i, current->j);
 			tree.backToParent();
 			tree.backToParent();
-			current++;
+			if(!currentAdd()) {return false; }
 			if (!label_list()) { return false; }
 			if (current->code == ';') {
 				tree.backToParent();
 				tree.add(current->code, current->i, current->j);
-				current++;
+				if(!currentAdd()) {return false; }
 				tree.backToParent();
 				return true;
 			}
@@ -136,7 +136,7 @@ bool Synatexer_Analizer::label_list() {
 	if (current->code == ',') {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!unsigned_integer()) {
 			error << "unsigned integer expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -144,7 +144,7 @@ bool Synatexer_Analizer::label_list() {
 		else {
 			tree.add("<unsigned-integer>");
 			tree.add(current->code, current->i, current->j);
-			current++;
+			if(!currentAdd()) {return false; }
 			tree.backToParent();
 			tree.backToParent();
 		}
@@ -165,7 +165,7 @@ bool Synatexer_Analizer::parameters_list() {
 	if (current->code == '(') {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!variable_identifier()) {
 			error << "variable identifier expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -175,7 +175,7 @@ bool Synatexer_Analizer::parameters_list() {
 		tree.backToParent();
 		if (current->code == ')') {
 			tree.add(current->code, current->i, current->j);
-			current++;
+			if(!currentAdd()) {return false; }
 			tree.backToParent();
 			return true;
 		}
@@ -194,7 +194,7 @@ bool Synatexer_Analizer::identifiers_list() {
 	if (current->code == ',') {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!variable_identifier()) {
 			error << "variable identifier expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -236,11 +236,11 @@ bool Synatexer_Analizer::statement(bool &err) {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (current->code == ':') {
 			tree.add(current->code, current->i, current->j);
 			tree.backToParent();
-			current++;
+			if(!currentAdd()) {return false; }
 			bool s = statement(err);
 			if (!s) { err = true; }
 			tree.backToParent();
@@ -254,10 +254,10 @@ bool Synatexer_Analizer::statement(bool &err) {
 	if (current->code == 406) {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (current->code == ';') {
 			tree.add(current->code, current->i, current->j);
-			current++;
+			if(!currentAdd()) {return false; }
 			tree.backToParent();
 			tree.backToParent();
 			return true;
@@ -270,7 +270,7 @@ bool Synatexer_Analizer::statement(bool &err) {
 	if (current->code == 405) {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!unsigned_integer()) {
 			error << "unsigned integer expected [" << current->i << ", " << current->j << "] - ";
 			return false;
@@ -280,12 +280,12 @@ bool Synatexer_Analizer::statement(bool &err) {
 			tree.add(current->code, current->i, current->j);
 			tree.backToParent();
 			tree.backToParent();
-			current++;
+			if(!currentAdd()) {return false; }
 			if (current->code == ';') {
 				tree.add(current->code, current->i, current->j);
 				tree.backToParent();
 				tree.backToParent();
-				current++;
+				if(!currentAdd()) {return false; }
 				return true;
 			}
 			else {
@@ -298,7 +298,7 @@ bool Synatexer_Analizer::statement(bool &err) {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		return true;
 	}
 	if (asfi()) {
@@ -333,7 +333,7 @@ bool Synatexer_Analizer::asfi() {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
 		tree.add("<assembly-insert-file-identifier>");
-		current++;
+		if(!currentAdd()) {return false; }
 		if (!identifier()) {
 			error << "identifier is expected [" << current->i << ", " << current->j << "]" << std::endl;
 			return false;
@@ -343,7 +343,7 @@ bool Synatexer_Analizer::asfi() {
 		if (current->code == 202) {
 			tree.add(current->code, current->i, current->j);
 			tree.backToParent();
-			current++;
+			if(!currentAdd()) {return false; }
 			return true;
 		}
 	}
@@ -355,7 +355,7 @@ bool Synatexer_Analizer::identifier() {
 	if (tables->isIdentifier(current->code)) {
 		tree.add(current->code, current->i, current->j);
 		tree.backToParent();
-		current++;
+		if(!currentAdd()) {return false; }
 		return true;
 	}
 	return false;
@@ -366,4 +366,13 @@ bool Synatexer_Analizer::unsigned_integer() {
 		return true;
 	}
 	return false;
+}
+
+bool Synatexer_Analizer::currentAdd() {
+	current++;
+	bool ret = (current == lex->end());
+	if (ret) {
+		error << "Lexer table ended, but synatexer analizer don`t end\n";
+	}
+	return !ret;
 }

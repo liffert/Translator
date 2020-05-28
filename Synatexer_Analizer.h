@@ -21,6 +21,7 @@ private:
 	bool asfi();
 	bool identifier();
 	bool unsigned_integer();
+	bool currentAdd();
 
     std::shared_ptr<std::vector<Lexical_Analizer::lexStruct>> lex;
 	std::shared_ptr<Tables> tables;
